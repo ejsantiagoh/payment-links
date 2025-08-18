@@ -24,3 +24,17 @@ La API utiliza **MySQL** como base de datos y autenticación mediante **API Key*
 ```bash
 git clone https://github.com/ejsantiagoh/payment-links.git
 cd payment-links-api
+
+### 2. Configurar entorno
+- Crea `.env` con variables DB.
+- Levanta DB: `docker-compose up -d`
+- Corre app: `mvn spring-boot:run`
+
+### 3. Uso
+- Usa `X-API-Key: test_merchant_key` en headers.
+- Swagger: http://localhost:8081/swagger-ui.html
+
+### Decisiones
+- API Key sobre JWT para simplicidad y tiempo.
+- Transacciones en /pay para idempotencia y consistencia.
+- Job cron cada 5 min para expiración.

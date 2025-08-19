@@ -2,6 +2,8 @@ package com.progracol.payment_links.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -11,7 +13,9 @@ import java.util.Map;
 @Data
 @Entity
 @Table(name = "payment_links", indexes = {
-    @Index(name = "idx_merchant_status", columnList = "merchant_id, status")
+    @Index(name = "idx_merchant_status", columnList = "merchant_id, status"),
+    @Index(name = "idx_links_created_at", columnList = "created_at"),
+    @Index(name = "idx_links_amount", columnList = "amount_cents")
 })
 public class PaymentLink {
     @Id
@@ -37,6 +41,10 @@ public class PaymentLink {
     private LocalDateTime expiresAt;
 
     private LocalDateTime paidAt;
+
+    @CreationTimestamp
+    @Column(name="created_at", updatable = false, nullable = false)
+    private LocalDateTime createdAt;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "JSON")

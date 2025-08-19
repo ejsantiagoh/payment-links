@@ -19,6 +19,6 @@ public interface PaymentLinkRepository extends JpaRepository<PaymentLink, String
     Page<PaymentLink> findByMerchantIdAndStatus(String merchantId, PaymentLink.Status status, Pageable pageable);
 
     // Para expiración
-    @Query("SELECT p FROM PaymentLink p WHERE p.status = 'CREATED' AND p.expiresAt < ?1")
+    @Query("SELECT p FROM PaymentLink p WHERE p.status = ?1 AND p.expiresAt < ?2")
     List<PaymentLink> findByStatusAndExpiresAtBefore(PaymentLink.Status created, LocalDateTime now);
 }

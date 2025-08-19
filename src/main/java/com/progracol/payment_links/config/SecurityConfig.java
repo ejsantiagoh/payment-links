@@ -20,7 +20,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()  // Permitir Swagger
+                        .requestMatchers(
+                        "/swagger-ui.html",
+                        "/swagger-ui/**", 
+                        "/api-docs/**").permitAll()  // Permitir Swagger
                         .anyRequest().authenticated()  // Todo lo demás requiere API Key
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

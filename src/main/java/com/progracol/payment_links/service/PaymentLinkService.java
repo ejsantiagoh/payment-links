@@ -57,7 +57,7 @@ public class PaymentLinkService {
     }
 
     private boolean isValidCurrency(String currency) {
-        // Simple check: longitud 3, uppercase. Mejora con lista de ISO si quieres.
+        // Simple check: longitud 3, uppercase.
         return currency != null && currency.length() == 3 && currency.matches("[A-Z]+");
     }
 

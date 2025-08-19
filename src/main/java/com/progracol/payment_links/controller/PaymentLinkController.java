@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/payment-links")
+@RequestMapping("/api/payment-links")
 public class PaymentLinkController {
 
     private final PaymentLinkService service;
@@ -40,7 +40,7 @@ public class PaymentLinkController {
     @PostMapping("/{id}/pay")
     public ResponseEntity<PaymentLinkResponse> pay(@PathVariable String id,
                                                    @RequestHeader("Idempotency-Key") String idempotencyKey,
-                                                   @RequestBody PayRequest request) {
+                                                   @Valid @RequestBody PayRequest request) {
         return ResponseEntity.ok(service.payPaymentLink(id, idempotencyKey, request.getPaymentToken()));
     }
 

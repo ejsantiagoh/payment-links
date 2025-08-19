@@ -1,0 +1,227 @@
+{
+  "info": {
+    "name": "Payment Links API (prefijo /api)",
+    "_postman_id": "64046a79-3d97-4acb-998a-7c6909342379",
+    "description": "Colecci\u00f3n para probar la API Payment Links con prefijo /api, autenticaci\u00f3n por API Key e idempotencia en el pago.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1) Crear payment link",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{api_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payment-links",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "payment-links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount_cents\": 250000,\n  \"currency\": \"COP\",\n  \"description\": \"Suscripci\\u00f3n Premium\",\n  \"expires_in_minutes\": 60,\n  \"metadata\": {\n    \"orderId\": \"ORD-123\"\n  }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Status 201/200\", function () {",
+              "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "const json = pm.response.json();",
+              "if (json && json.id) {",
+              "  pm.collectionVariables.set(\"payment_link_id\", json.id);",
+              "}",
+              "if (json && json.reference) {",
+              "  pm.collectionVariables.set(\"payment_link_ref\", json.reference);",
+              "}",
+              "console.log(\"payment_link_id:\", pm.collectionVariables.get(\"payment_link_id\"));",
+              "console.log(\"payment_link_ref:\", pm.collectionVariables.get(\"payment_link_ref\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2) Listar payment links (status=CREATED)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{api_key}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payment-links?status=CREATED",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "payment-links?status=CREATED"
+          ]
+        }
+      }
+    },
+    {
+      "name": "3a) Obtener link por id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{api_key}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payment-links/{{payment_link_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "payment-links",
+            "{{payment_link_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "3b) Obtener link por reference",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{api_key}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payment-links/{{payment_link_ref}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "payment-links",
+            "{{payment_link_ref}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "4) Pagar link (\u00e9xito)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{api_key}}"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{idempotency_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payment-links/{{payment_link_id}}/pay",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "payment-links",
+            "{{payment_link_id}}",
+            "pay"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payment_token\": \"ok_visa\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "if (!pm.collectionVariables.get(\"idempotency_key\")) {",
+              "  pm.collectionVariables.set(\"idempotency_key\", crypto.randomUUID());",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5) Cancelar link",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{api_key}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payment-links/{{payment_link_id}}/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "payment-links",
+            "{{payment_link_id}}",
+            "cancel"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "api_key",
+      "value": "test_merchant_key"
+    },
+    {
+      "key": "payment_link_id",
+      "value": ""
+    },
+    {
+      "key": "payment_link_ref",
+      "value": ""
+    },
+    {
+      "key": "idempotency_key",
+      "value": "28ecbf97-f3e9-4697-b284-40d2251b20e1"
+    }
+  ]
+}

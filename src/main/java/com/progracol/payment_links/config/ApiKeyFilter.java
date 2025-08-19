@@ -28,9 +28,12 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
-        if (path.startsWith("/swagger-ui.html") || path.startsWith("/api-docs") || path.startsWith("/v3/api-docs")) {
-            filterChain.doFilter(request, response);
-            return;
+        if (path.startsWith("/swagger-ui/") ||          
+                path.equals("/swagger-ui.html") ||        
+                path.startsWith("/api-docs") ||           
+                path.startsWith("/v3/api-docs")) {        
+                filterChain.doFilter(request, response);
+                return;
         }
 
         String apiKey = request.getHeader("X-API-Key");

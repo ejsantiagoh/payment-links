@@ -21,10 +21,13 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                        "/swagger-ui.html",
-                        "/swagger-ui/**", 
-                        "/api-docs/**").permitAll()  // Permitir Swagger
-                        .anyRequest().authenticated()  // Todo lo demás requiere API Key
+                                "/api-docs",          // Agregado: Permite el raíz exacto
+                                "/api-docs/**",       // Path default de OpenAPI, por si acaso
+                                "/v3/api-docs/**",    // UI principal
+                                "/swagger-ui.html",   // Todos los assets de UI
+                                "/swagger-ui/**"      
+                        ).permitAll()
+                        .anyRequest().authenticated()  // Resto requiere API Key
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class);
